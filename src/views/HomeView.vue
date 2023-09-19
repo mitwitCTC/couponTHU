@@ -24,6 +24,7 @@ export default {
       plate: "",
       dbPlate: "AAA-1111",
       hasPlate: true,
+      stationIndex: ""
     }
   },
   components: {
@@ -31,7 +32,7 @@ export default {
     RouterLink,
   },
   methods: {
-    search() {
+    search(plate) {
       if (this.plate === this.dbPlate) {
         this.hasPlate = true
         router.push({ name: 'bill' })
@@ -39,6 +40,9 @@ export default {
         this.hasPlate = false;
       }
     }
+  },
+  created(){
+    this.stationIndex = this.$route.params.stationIndex;
   }
 }
 </script>

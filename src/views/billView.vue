@@ -79,6 +79,7 @@ export default {
             getDiscountHour: '',
             amount: null,
             getSucces: false,
+            stationIndex: ""
         }
     },
     components: {
@@ -101,7 +102,10 @@ export default {
     },
     mounted() {
         this.checkHours(); // 確認可以折抵的時數額度
-    }
+    },
+    created(){
+    this.stationIndex = this.$route.params.stationIndex;
+  }
 }
 </script>
 
