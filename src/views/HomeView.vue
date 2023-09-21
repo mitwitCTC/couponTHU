@@ -16,13 +16,13 @@
 import { RouterLink, RouterView } from 'vue-router'
 import router from '../router';
 const { VITE_APP_URL, VITE_APP_PATH } = import.meta.env
+const Api = "https://dc28-122-116-23-30.ngrok-free.app";
 
 export default {
   data() {
     return {
       isLoading: false,
       plate: "",
-      dbPlate: "AAA-1111",
       hasPlate: true,
       stationIndex: ""
     }
@@ -33,15 +33,20 @@ export default {
   },
   methods: {
     search(plate) {
-      if (this.plate === this.dbPlate) {
-        this.hasPlate = true
-        router.push({ name: 'bill' })
-      } else {
-        this.hasPlate = false;
-      }
+      const searchApi = `${Api}/points/search`;
+      this.$http
+        .post(searchApi, { "stationIndex": this.stationIndex, "plate": this.plate })
+        .then((response) => {
+          if (response.data.arr_time) {
+            localStorage.setItem('plate', response.data.plate);
+            router.push('/:stationIndex/bill')
+          } else {
+            this.hasPlate = false;
+          }
+        })
     }
   },
-  created(){
+  created() {
     this.stationIndex = this.$route.params.stationIndex;
   }
 }
