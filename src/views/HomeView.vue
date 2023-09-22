@@ -4,7 +4,7 @@
     <div class="container mt-5">
       <label for="exampleInputEmail1" class="form-label">車牌號碼</label>
       <div class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="請輸入車牌號碼搜尋" v-model="plate"
+        <input class="form-control me-2" type="search" placeholder="請輸入車牌號碼搜尋(需包含 - )" v-model="plate"
           @keydown.enter="search(plate)">
         <img v-if="!isLoading" src="../assets/icons8-search.svg" alt="search" class="mx-3" @click="search(plate)">
         <img v-if="isLoading" src="../../public/Spinner-1s-200px.svg" style="width:30px;" alt="loading" class="mx-3">
