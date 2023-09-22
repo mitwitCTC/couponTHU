@@ -41,12 +41,18 @@
         </div>
         <!-- 折抵成功 -->
         <div v-else-if="hasApplied && getSucces" class="billDetail d-flex flex-column mt-5">
+            <div class="plate-bg">
+                {{ billDetail.plate }}
+            </div>
             <p class="text-success text-center fs-3">{{ getMessage }}</p>
             <p class="text-center">應繳金額 NT$ <span class="fs-3">{{ billDetail.fee }}</span></p>
             <button class="btn btn-primary w-50 align-self-center mb-3" @click="pay">繳費離場</button>
         </div>
         <!-- 折抵失敗 -->
         <div v-else-if="hasApplied && !getSucces" class="billDetail d-flex flex-column mt-5">
+            <div class="plate-bg">
+                {{ billDetail.plate }}
+            </div>
             <p class="text-danger text-center fs-3">
                 {{ getMessage }}
             </p>
@@ -146,7 +152,7 @@ export default {
             const getHoursApi = `${Api}/points/discount`;
             this.$http
                 // .post(getHoursApi, { "amount": this.amount, "IssueDate": this.today, "SerialNumber": "testP004" })
-                .post(getHoursApi, { "amount": this.amount, "IssueDate": this.today, "SerialNumber": "test006" })
+                .post(getHoursApi, { "amount": this.amount, "IssueDate": this.today, "SerialNumber": "test010" })
                 .then((response) => {
                     this.isLoading = false;
                     this.getMessage = response.data.message;
