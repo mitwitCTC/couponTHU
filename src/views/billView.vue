@@ -55,6 +55,17 @@
             <button class="btn btn-primary w-50 align-self-center mb-3" @click="pay">繳費離場</button>
             <p class="text-danger text-center fs-6 mb-2">如有疑問，請洽停車場管理員</p>
         </div>
+        <!-- 系統錯誤 -->
+        <div v-else-if="!hasApplied && !getSucces" class="billDetail d-flex flex-column align-items-center mt-5">
+            <p class="text-danger text-center fs-3">
+                哎呀！出錯了！<br>
+                <span class="fs-6">請回上頁重新搜尋再次折抵</span>
+            </p>
+            <button @click="goBack" class="btn btn-sm btn-primary">Go Back</button>
+            <p class="text-center">應繳金額 NT$ <span class="fs-3">{{ billDetail.fee }}</span></p>
+            <button class="btn btn-primary w-50 align-self-center mb-3" @click="pay">繳費離場</button>
+            <p class="text-danger text-center fs-6 mb-2">如有疑問，請洽停車場管理員</p>
+        </div>
     </main>
 </template>
 
@@ -62,7 +73,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import router from '../router';
 const { VITE_APP_URL, VITE_APP_PATH } = import.meta.env;
-const Api = "https://dc28-122-116-23-30.ngrok-free.app";
+const Api = "https://944b-122-116-23-30.ngrok-free.app";
 
 export default {
     data() {
@@ -90,12 +101,24 @@ export default {
         RouterLink,
     },
     methods: {
+        // 取場站資訊
+        getStationInfo() {
+            const getStationInfoApi = `${Api}/points/stationInfo`;
+            this.$http
+                .post(getStationInfoApi, { "stationIndex": this.stationIndex })
+                .then((response) => {
+                    if (!response.data.ip) {
+                        console.warn(response.data.message);
+                    }
+                })
+        },
         // 取車號
         getPlate() {
             this.plate = localStorage.getItem('plate');
         },
         // 查車
         search(plate) {
+            this.getStationInfo();
             this.getPlate();
             const searchApi = `${Api}/points/search`;
             this.$http
@@ -114,27 +137,35 @@ export default {
         },
         // 確認折抵時數
         getHours() {
+            this.isLoading = true
             const hour = document.querySelector('#discountHours');
             this.getDiscountHour = hour.value;
             this.amount = this.getDiscountHour * 60;
             const d = new Date();
-            this.today = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + d.getDate();
+            this.today = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + d.getDate();
             const getHoursApi = `${Api}/points/discount`;
             this.$http
-                .post(getHoursApi, { "amount": this.amount, "IssueDate": this.today, "SerialNumber": "testP004" })
-                // .post(getHoursApi, { "amount": this.amount, "IssueDate": this.today, "SerialNumber": "test005" })
+                // .post(getHoursApi, { "amount": this.amount, "IssueDate": this.today, "SerialNumber": "testP004" })
+                .post(getHoursApi, { "amount": this.amount, "IssueDate": this.today, "SerialNumber": "test006" })
                 .then((response) => {
+                    this.isLoading = false;
                     this.getMessage = response.data.message;
                     if (this.getMessage == "折抵成功.") {
                         this.hasApplied = true;
                         this.getSucces = true
-                    } else {
+                    } else if (this.getMessage == "票券已使用過.") {
                         this.hasApplied = true;
+                        this.getSucces = false;
+                    } else {
+                        this.hasApplied = false;
                         this.getSucces = false;
                     }
                     this.search();
                 })
-
+        },
+        goBack() {
+            //  數字 -1 代表返回上一步
+            return this.$router.go(-1);
         },
         pay() {
             parent.window.location.replace("https://utaggoif.utaggo.com.tw/payment/startpay01");
@@ -185,6 +216,15 @@ export default {
     background-position: top center;
     width: 100vw;
     height: 100vh;
+}
+
+.go-back {
+    width: 80px;
+    color: #e2e1dc;
+    background-color: #868075;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 </style>
   
