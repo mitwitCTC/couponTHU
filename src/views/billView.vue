@@ -67,7 +67,7 @@
                 哎呀！出錯了！<br>
                 <span class="fs-6">請回上頁重新搜尋再次折抵</span>
             </p>
-            <button @click="goBack" class="btn btn-sm btn-primary">Go Back</button>
+            <button @click="goBack" class="btn btn-sm btn-primary">重新查詢</button>
             <p class="text-center">應繳金額 NT$ <span class="fs-3">{{ billDetail.fee }}</span></p>
             <button class="btn btn-primary w-50 align-self-center mb-3" @click="pay">繳費離場</button>
             <p class="text-danger text-center fs-6 mb-2">如有疑問，請洽停車場管理員</p>
@@ -122,6 +122,10 @@ export default {
         getPlate() {
             this.plate = localStorage.getItem('plate');
         },
+        // 金額加逗號
+        toThousands() {
+            this.billDetail.fee = (this.billDetail.fee || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')
+        },
         // 查車
         search(plate) {
             this.getStationInfo();
@@ -133,6 +137,7 @@ export default {
                     this.isLoading = false
                     if (response.data.arr_time) {
                         this.billDetail = response.data;
+                        this.toThousands();
                         this.checkHours();
                     }
                 })
@@ -152,7 +157,7 @@ export default {
             const getHoursApi = `${Api}/points/discount`;
             this.$http
                 // .post(getHoursApi, { "amount": this.amount, "IssueDate": this.today, "SerialNumber": "testP004" })
-                .post(getHoursApi, { "amount": this.amount, "IssueDate": this.today, "SerialNumber": "test010" })
+                .post(getHoursApi, { "amount": this.amount, "IssueDate": this.today, "SerialNumber": "test016" })
                 .then((response) => {
                     this.isLoading = false;
                     this.getMessage = response.data.message;
