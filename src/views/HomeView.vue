@@ -6,7 +6,8 @@
       <div class="d-flex">
         <input class="form-control me-2" type="search" placeholder="請輸入車牌號碼搜尋" v-model="plate"
           @keydown.enter="search(plate)">
-        <img src="../assets/icons8-search.svg" alt="search" class="mx-3" @click="search(plate)">
+        <img v-if="!isLoading" src="../assets/icons8-search.svg" alt="search" class="mx-3" @click="search(plate)">
+        <img v-if="isLoading" src="../../public/Spinner-1s-200px.svg" style="width:30px;" alt="loading" class="mx-3">
       </div>
       <p v-if="!hasPlate" class="text-warning fs-6 mt-1"><img src="../assets/icons8-info.svg" alt=""> 查無此車號，請重新輸入</p>
     </div>
@@ -45,10 +46,12 @@ export default {
         })
     },
     search(plate) {
+      this.isLoading = true;
       const searchApi = `${Api}/points/search`;
       this.$http
         .post(searchApi, { "stationIndex": this.stationIndex, "plate": this.plate })
         .then((response) => {
+          this.isLoading = false;
           if (response.data.arr_time) {
             localStorage.setItem('plate', response.data.plate);
             router.push(`/${this.stationIndex}/bill`)
