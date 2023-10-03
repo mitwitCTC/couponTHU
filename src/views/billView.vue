@@ -79,7 +79,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import router from '../router';
 const { VITE_APP_URL, VITE_APP_PATH } = import.meta.env;
-const Api = "https://944b-122-116-23-30.ngrok-free.app";
+const Api = "https://4bad-122-116-23-30.ngrok-free.app";
 
 export default {
     data() {
